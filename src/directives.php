@@ -44,6 +44,28 @@ return [
 
     /*
     |---------------------------------------------------------------------
+    | @isnull / @isnotnull
+    |---------------------------------------------------------------------
+    */
+
+    'isnull' => function ($expression) {
+        return "<?php if (is_null({$expression})) : ?>";
+    },
+
+    'endisnull' => function ($expression) {
+        return '<?php endif; ?>';
+    },
+
+    'isnotnull' => function ($expression) {
+        return "<?php if (! is_null({$expression})) : ?>";
+    },
+
+    'endisnotnull' => function ($expression) {
+        return '<?php endif; ?>';
+    },
+
+    /*
+    |---------------------------------------------------------------------
     | @mix
     |---------------------------------------------------------------------
     */
@@ -210,11 +232,10 @@ return [
     */
 
     'pushonce' => function ($expression) {
-        list($pushName, $pushSub) = explode(':', trim(substr($expression, 1, -1)));
-
-        $key = '__pushonce_'.$pushName.'_'.$pushSub;
-
-        return "<?php if(! isset(\$__env->{$key})): \$__env->{$key} = 1; \$__env->startPush('{$pushName}'); ?>";
+        return '<?php '
+            .sprintf(' list($__pushName, $__pushSub) = explode(\':\', trim(%s)); ', $expression)
+            .' $__pushKey = \'__pushonce_\'.$__pushName.\'_\'.$__pushSub;'
+            .' if(! isset($__env->{$__pushKey})): $__env->{$__pushKey} = 1; $__env->startPush($__pushName); ?>';
     },
 
     'endpushonce' => function () {
@@ -233,6 +254,22 @@ return [
 
     'endrepeat' => function ($expression) {
         return '<?php endfor; ?>';
+    },
+
+    /*
+     |---------------------------------------------------------------------
+     | @data
+     |---------------------------------------------------------------------
+     */
+
+    'data' => function ($expression) {
+        $output = 'collect((array) '.$expression.')
+            ->map(function($value, $key) {
+                return "data-{$key}=\"{$value}\"";
+            })
+            ->implode(" ")';
+
+        return "<?php echo $output; ?>";
     },
 
     /*

@@ -15,20 +15,6 @@ You can install the package via composer:
 composer require appstract/laravel-blade-directives
 ```
 
-### Provider
-
-In Laravel 5.5 the package will autoregister the Service Provider. In older versions, you must add the ServiceProvider to your `config/app.php` file:
-
-```php
-'providers' => [
-    ...
-
-    Appstract\BladeDirectives\BladeDirectivesServiceProvider::class
-
-    ...
-];
-```
-
 ## Usage
 
 ### @istrue
@@ -57,6 +43,26 @@ Same as ```@istrue``` but checks for isset and false.
 @endisfalse
 ```
 
+### @isnull
+
+Only show when ```$variable``` is null.
+
+```blade
+@isnull($variable)
+   This will be echoed
+@endisnull
+```
+
+### @isnotnull
+
+Same as ```@isnull``` but one shows when ```$variable``` is not null.
+
+```blade
+@isnotnull($variable)
+   This will be echoed
+@endisnotnull
+```
+
 ### @dump and @dd
 
 ```blade
@@ -70,13 +76,13 @@ Same as ```@istrue``` but checks for isset and false.
 Create a HTML element to your Laravel-Mix css or js.
 ```blade
 @mix('/css/app.css')
-@mix('/css/app.js')
+@mix('/js/app.js')
 ```
 Output:
 
 ```blade
 <link rel="stylesheet" href="{{ mix('/css/app.css') }}">
-<script src="{{ mix('/css/app.js') }}"></script>
+<script src="{{ mix('/js/app.js') }}"></script>
 ```
 
 ### @style
@@ -190,10 +196,18 @@ Quickly output a Font Awesome icon.
 @fa('address-book', 'optional-extra-class')
 ```
 
+### @data
+
+Output data-attributes from an array.
+
+```blade
+@data(['testing' => 123])
+```
+
 ## Testing
 
 ```bash
-$ composer test
+composer test
 ```
 
 ## Contributing
